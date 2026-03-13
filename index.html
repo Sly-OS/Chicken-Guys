@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Chicken Guys</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="mobile-header">
+        <button class="icon-button menu-toggle" id="menu-open" type="button" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <a class="brand" href="#" aria-label="The Chicken Guys">
+          <span class="brand__mark">The Chicken Guys</span>
+        </a>
+        <div class="header-spacer" aria-hidden="true"></div>
+      </header>
+
+      <main class="page-shell">
+        <h1 class="page-title" id="page-title">Menu</h1>
+        <h1 class="visually-hidden" id="section-title">Chicken Meals</h1>
+
+        <div class="product-list" id="product-grid"></div>
+        <div class="location-card" id="location-card" hidden>
+          <p class="location-card__label">Location</p>
+          <p class="location-card__name">Culver City Farmers Market</p>
+        </div>
+        <div class="location-card" id="catering-card" hidden>
+          <p class="location-card__label">Catering</p>
+          <p class="location-card__name">Catering available for events and group orders.</p>
+        </div>
+      </main>
+
+      <aside class="menu-drawer" id="menu-drawer" aria-hidden="true">
+        <div class="menu-drawer__panel">
+          <div class="menu-drawer__header">
+            <button class="icon-button menu-close" id="menu-close" type="button" aria-label="Close menu">
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+
+          <nav class="drawer-nav" aria-label="Menu categories">
+            <ul class="drawer-nav__list" id="category-list"></ul>
+          </nav>
+        </div>
+      </aside>
+    </div>
+
+    <template id="product-card-template">
+      <article class="product-card">
+        <div class="product-card__media-wrap">
+          <div class="product-card__image" aria-hidden="true"></div>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__copy">
+            <h2 class="product-card__name"></h2>
+            <p class="product-card__meta"></p>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
