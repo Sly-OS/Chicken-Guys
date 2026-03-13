@@ -39,16 +39,77 @@ const menuData = [
     ],
   },
   {
-    id: "location",
-    label: "Location",
+    id: "locations",
+    label: "Locations",
     items: [],
-    locationName: "Culver City Farmers Market",
+    locations: [
+      {
+        name: "Manhattan Beach Farmers Market",
+        day: "Tuesday",
+        time: "11:00 AM - 3:00 PM",
+        addressLine1: "326 13th St",
+        addressLine2: "Manhattan Beach, CA 90266",
+      },
+      {
+        name: "Long Beach Farmers Market (Marine Stadium)",
+        day: "Wednesday",
+        time: "3:00 PM - 7:00 PM",
+        addressLine1: "5255 Paoli Way",
+        addressLine2: "Long Beach, CA 90803",
+      },
+      {
+        name: "El Segundo Certified Farmers Market",
+        day: "Thursday",
+        time: "3:00 PM - 7:00 PM",
+        addressLine1: "350 Main St",
+        addressLine2: "El Segundo, CA 90245",
+      },
+      {
+        name: "Laguna Beach Farmers Market",
+        day: "Saturday",
+        time: "8:00 AM - 12:00 PM",
+        addressLine1: "521 Forest Ave",
+        addressLine2: "Laguna Beach, CA 92651",
+      },
+      {
+        name: "Mar Vista Certified Farmers Market",
+        day: "Sunday",
+        time: "9:00 AM - 2:00 PM",
+        addressLine1: "12198 Venice Blvd",
+        addressLine2: "Los Angeles, CA 90066",
+      },
+    ],
   },
   {
     id: "catering",
     label: "Catering",
     items: [],
-    cateringText: "Catering available for events and group orders.",
+    cateringDetails: {
+      headline: "Catering for Every Occasion",
+      description:
+        "From casual office lunches to family celebrations, we prepare crowd-pleasing chicken meals with reliable service and clear communication from start to finish.",
+      events: [
+        "Office lunches",
+        "Birthday parties",
+        "Family gatherings",
+        "School and team events",
+        "Private celebrations",
+      ],
+      phoneDisplay: "(310) 555-0198",
+      phoneHref: "tel:+13105550198",
+      textHref: "sms:+13105550198",
+      emailDisplay: "catering@thechickenguys.com",
+      emailHref: "mailto:catering@thechickenguys.com",
+      contactItems: [
+        "Event date and preferred pickup or delivery time",
+        "Estimated guest count",
+        "Which menu items you are interested in",
+        "Venue or delivery location",
+        "Any dietary needs or special requests",
+      ],
+      advanceNotice:
+        "Please reach out as early as possible for large catering orders so we can confirm availability and plan your order properly.",
+    },
   },
 ];
 
@@ -56,6 +117,7 @@ const categoryList = document.querySelector("#category-list");
 const productGrid = document.querySelector("#product-grid");
 const locationCard = document.querySelector("#location-card");
 const cateringCard = document.querySelector("#catering-card");
+const cateringContent = document.querySelector("#catering-content");
 const pageTitle = document.querySelector("#page-title");
 const sectionTitle = document.querySelector("#section-title");
 const menuDrawer = document.querySelector("#menu-drawer");
@@ -112,11 +174,14 @@ function setCardImageStyles(imageElement, imageData) {
 function renderProducts() {
   const activeCategory = getActiveCategory();
   const items = activeCategory.items ?? [];
+  const locationList = activeCategory.locations ?? [];
+  const cateringDetails = activeCategory.cateringDetails;
 
   sectionTitle.textContent = activeCategory.label;
   productGrid.innerHTML = "";
   locationCard.hidden = true;
   cateringCard.hidden = true;
+  cateringContent.hidden = true;
   pageTitle.hidden = activeCategory.id !== "chicken-meals";
 
   items.forEach((item) => {
@@ -131,14 +196,96 @@ function renderProducts() {
     productGrid.append(fragment);
   });
 
-  if (activeCategory.locationName) {
+  if (locationList.length > 0) {
     locationCard.hidden = false;
-    locationCard.querySelector(".location-card__name").textContent = activeCategory.locationName;
+    const locationCardBody = locationCard.querySelector(".location-card__content");
+    locationCardBody.innerHTML = "";
+
+    locationList.forEach((location) => {
+      const entry = document.createElement("section");
+      entry.className = "location-entry";
+
+      const name = document.createElement("p");
+      name.className = "location-entry__name";
+      name.textContent = location.name;
+
+      const day = document.createElement("p");
+      day.className = "location-entry__detail";
+      day.textContent = location.day;
+
+      const time = document.createElement("p");
+      time.className = "location-entry__detail";
+      time.textContent = location.time;
+
+      const addressLine1 = document.createElement("p");
+      addressLine1.className = "location-entry__detail";
+      addressLine1.textContent = location.addressLine1;
+
+      const addressLine2 = document.createElement("p");
+      addressLine2.className = "location-entry__detail";
+      addressLine2.textContent = location.addressLine2;
+
+      entry.append(name, day, time, addressLine1, addressLine2);
+      locationCardBody.append(entry);
+    });
   }
 
-  if (activeCategory.cateringText) {
+  if (cateringDetails) {
     cateringCard.hidden = false;
-    cateringCard.querySelector(".location-card__name").textContent = activeCategory.cateringText;
+    cateringContent.hidden = false;
+
+    cateringCard.querySelector(".catering-hero__title").textContent = cateringDetails.headline;
+    cateringCard.querySelector(".catering-hero__text").textContent = cateringDetails.description;
+
+    const eventList = cateringCard.querySelector(".catering-list");
+    eventList.innerHTML = "";
+
+    cateringDetails.events.forEach((eventName) => {
+      const item = document.createElement("li");
+      item.textContent = eventName;
+      eventList.append(item);
+    });
+
+    const contactActions = cateringCard.querySelector(".catering-actions");
+    contactActions.innerHTML = "";
+
+    [
+      { label: "Call Now", href: cateringDetails.phoneHref },
+      { label: "Text Us", href: cateringDetails.textHref },
+      { label: "Email Us", href: cateringDetails.emailHref },
+    ].forEach((action) => {
+      const link = document.createElement("a");
+      link.className = "catering-action";
+      link.href = action.href;
+      link.textContent = action.label;
+      contactActions.append(link);
+    });
+
+    const contactChannels = cateringCard.querySelector(".catering-contact__channels");
+    contactChannels.innerHTML = "";
+
+    [
+      { label: "Call", display: cateringDetails.phoneDisplay, href: cateringDetails.phoneHref },
+      { label: "Text", display: cateringDetails.phoneDisplay, href: cateringDetails.textHref },
+      { label: "Email", display: cateringDetails.emailDisplay, href: cateringDetails.emailHref },
+    ].forEach((channel) => {
+      const item = document.createElement("a");
+      item.className = "catering-contact__item";
+      item.href = channel.href;
+      item.innerHTML = `<span>${channel.label}</span><strong>${channel.display}</strong>`;
+      contactChannels.append(item);
+    });
+
+    const contactItems = cateringCard.querySelector(".catering-contact__details");
+    contactItems.innerHTML = "";
+
+    cateringDetails.contactItems.forEach((detail) => {
+      const item = document.createElement("li");
+      item.textContent = detail;
+      contactItems.append(item);
+    });
+
+    cateringCard.querySelector(".catering-note__text").textContent = cateringDetails.advanceNotice;
   }
 }
 
