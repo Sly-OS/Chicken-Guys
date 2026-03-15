@@ -45,14 +45,18 @@ const menuData = [
     items: [],
     locations: [
       {
-        name: "Helen Albert Farmers Market",
+        name: "Helen Albert Certified Farmers' Market",
         day: "Monday",
         time: "9:00 AM - 2:00 PM",
+        addressLine1: "Plummer Park, 1200 N Vista St",
+        addressLine2: "West Hollywood, CA 90046",
       },
       {
         name: "Culver City Farmers Market",
         day: "Tuesday",
         time: "2:00 PM - 7:00 PM",
+        addressLine1: "3843 Main St",
+        addressLine2: "Culver City, CA 90232",
       },
       {
         name: "Manhattan Beach Farmers Market",
@@ -62,9 +66,11 @@ const menuData = [
         addressLine2: "Manhattan Beach, CA 90266",
       },
       {
-        name: "Larchmont Farmers Market",
+        name: "Larchmont Village Farmers' Market",
         day: "Wednesday",
         time: "1:00 PM - 5:00 PM",
+        addressLine1: "209 N Larchmont Blvd",
+        addressLine2: "Los Angeles, CA 90004",
       },
       {
         name: "Long Beach Farmers Market (Marine Stadium)",
@@ -77,6 +83,8 @@ const menuData = [
         name: "South Pasadena Farmers Market",
         day: "Thursday",
         time: "4:00 PM - 8:00 PM",
+        addressLine1: "920 Meridian Ave",
+        addressLine2: "South Pasadena, CA 91030",
       },
       {
         name: "El Segundo Certified Farmers Market",
@@ -86,9 +94,11 @@ const menuData = [
         addressLine2: "El Segundo, CA 90245",
       },
       {
-        name: "Marina del Rey Farmers Market",
+        name: "Marina del Rey Farmers' Market",
         day: "Saturday",
         time: "9:00 AM - 2:00 PM",
+        addressLine1: "14101 Panay Way",
+        addressLine2: "Marina del Rey, CA 90292",
       },
       {
         name: "Laguna Beach Farmers Market",
@@ -98,9 +108,11 @@ const menuData = [
         addressLine2: "Laguna Beach, CA 92651",
       },
       {
-        name: "Hollywood Farmers Market",
+        name: "Hollywood Farmers' Market",
         day: "Sunday",
         time: "8:00 AM - 1:00 PM",
+        addressLine1: "1600 Ivar Ave",
+        addressLine2: "Los Angeles, CA 90028",
       },
       {
         name: "Mar Vista Certified Farmers Market",
