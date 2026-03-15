@@ -3,6 +3,7 @@ const menuData = [
   {
     id: "chicken-meals",
     label: "Menu",
+    menuBadge: "Halal Chicken",
     items: [
       {
         name: "Full Chicken with Potatoes",
@@ -44,11 +45,26 @@ const menuData = [
     items: [],
     locations: [
       {
+        name: "Helen Albert Farmers Market",
+        day: "Monday",
+        time: "9:00 AM - 2:00 PM",
+      },
+      {
+        name: "Culver City Farmers Market",
+        day: "Tuesday",
+        time: "2:00 PM - 7:00 PM",
+      },
+      {
         name: "Manhattan Beach Farmers Market",
         day: "Tuesday",
         time: "11:00 AM - 3:00 PM",
         addressLine1: "326 13th St",
         addressLine2: "Manhattan Beach, CA 90266",
+      },
+      {
+        name: "Larchmont Farmers Market",
+        day: "Wednesday",
+        time: "1:00 PM - 5:00 PM",
       },
       {
         name: "Long Beach Farmers Market (Marine Stadium)",
@@ -58,6 +74,11 @@ const menuData = [
         addressLine2: "Long Beach, CA 90803",
       },
       {
+        name: "South Pasadena Farmers Market",
+        day: "Thursday",
+        time: "4:00 PM - 8:00 PM",
+      },
+      {
         name: "El Segundo Certified Farmers Market",
         day: "Thursday",
         time: "3:00 PM - 7:00 PM",
@@ -65,11 +86,21 @@ const menuData = [
         addressLine2: "El Segundo, CA 90245",
       },
       {
+        name: "Marina del Rey Farmers Market",
+        day: "Saturday",
+        time: "9:00 AM - 2:00 PM",
+      },
+      {
         name: "Laguna Beach Farmers Market",
         day: "Saturday",
         time: "8:00 AM - 12:00 PM",
         addressLine1: "521 Forest Ave",
         addressLine2: "Laguna Beach, CA 92651",
+      },
+      {
+        name: "Hollywood Farmers Market",
+        day: "Sunday",
+        time: "8:00 AM - 1:00 PM",
       },
       {
         name: "Mar Vista Certified Farmers Market",
@@ -118,6 +149,8 @@ const productGrid = document.querySelector("#product-grid");
 const locationCard = document.querySelector("#location-card");
 const cateringCard = document.querySelector("#catering-card");
 const cateringContent = document.querySelector("#catering-content");
+const contentStage = document.querySelector("#content-stage");
+const menuBadge = document.querySelector("#menu-badge");
 const pageTitle = document.querySelector("#page-title");
 const sectionTitle = document.querySelector("#section-title");
 const menuDrawer = document.querySelector("#menu-drawer");
@@ -126,21 +159,43 @@ const menuCloseButton = document.querySelector("#menu-close");
 const productCardTemplate = document.querySelector("#product-card-template");
 
 let activeCategoryId = menuData[0].id;
+let isTransitioning = false;
+
+const CONTENT_OUT_DURATION = 240;
+const CONTENT_IN_DURATION = 520;
+
+function wait(duration) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, duration);
+  });
+}
 
 function getActiveCategory() {
   return menuData.find((category) => category.id === activeCategoryId) ?? menuData[0];
 }
 
 function closeDrawer() {
+  menuDrawer.classList.remove("is-opening");
+  menuDrawer.classList.add("is-closing");
   menuDrawer.classList.remove("is-open");
   menuDrawer.setAttribute("aria-hidden", "true");
   document.body.classList.remove("body-lock");
+
+  window.setTimeout(() => {
+    menuDrawer.classList.remove("is-closing");
+  }, 520);
 }
 
 function openDrawer() {
+  menuDrawer.classList.remove("is-closing");
   menuDrawer.classList.add("is-open");
+  menuDrawer.classList.add("is-opening");
   menuDrawer.setAttribute("aria-hidden", "false");
   document.body.classList.add("body-lock");
+
+  window.setTimeout(() => {
+    menuDrawer.classList.remove("is-opening");
+  }, 560);
 }
 
 function renderCategories() {
@@ -154,9 +209,13 @@ function renderCategories() {
     button.textContent = category.label;
     button.className = category.id === activeCategoryId ? "is-active" : "";
     button.setAttribute("aria-pressed", String(category.id === activeCategoryId));
-    button.addEventListener("click", () => {
-      activeCategoryId = category.id;
-      render();
+    button.addEventListener("click", async () => {
+      if (category.id === activeCategoryId) {
+        closeDrawer();
+        return;
+      }
+
+      await transitionToCategory(category.id);
       closeDrawer();
     });
 
@@ -176,12 +235,14 @@ function renderProducts() {
   const items = activeCategory.items ?? [];
   const locationList = activeCategory.locations ?? [];
   const cateringDetails = activeCategory.cateringDetails;
+  const activeMenuBadge = activeCategory.menuBadge;
 
   sectionTitle.textContent = activeCategory.label;
   productGrid.innerHTML = "";
   locationCard.hidden = true;
   cateringCard.hidden = true;
   cateringContent.hidden = true;
+  menuBadge.hidden = true;
   pageTitle.hidden = activeCategory.id !== "chicken-meals";
 
   items.forEach((item) => {
@@ -217,17 +278,29 @@ function renderProducts() {
       time.className = "location-entry__detail";
       time.textContent = location.time;
 
-      const addressLine1 = document.createElement("p");
-      addressLine1.className = "location-entry__detail";
-      addressLine1.textContent = location.addressLine1;
+      entry.append(name, day, time);
 
-      const addressLine2 = document.createElement("p");
-      addressLine2.className = "location-entry__detail";
-      addressLine2.textContent = location.addressLine2;
+      if (location.addressLine1) {
+        const addressLine1 = document.createElement("p");
+        addressLine1.className = "location-entry__detail";
+        addressLine1.textContent = location.addressLine1;
+        entry.append(addressLine1);
+      }
 
-      entry.append(name, day, time, addressLine1, addressLine2);
+      if (location.addressLine2) {
+        const addressLine2 = document.createElement("p");
+        addressLine2.className = "location-entry__detail";
+        addressLine2.textContent = location.addressLine2;
+        entry.append(addressLine2);
+      }
+
       locationCardBody.append(entry);
     });
+  }
+
+  if (activeMenuBadge) {
+    menuBadge.hidden = false;
+    menuBadge.textContent = activeMenuBadge;
   }
 
   if (cateringDetails) {
@@ -292,6 +365,29 @@ function renderProducts() {
 function render() {
   renderCategories();
   renderProducts();
+}
+
+async function transitionToCategory(nextCategoryId) {
+  if (isTransitioning) {
+    return;
+  }
+
+  isTransitioning = true;
+  contentStage.classList.remove("is-entering");
+  contentStage.classList.add("is-leaving");
+
+  await wait(CONTENT_OUT_DURATION);
+
+  activeCategoryId = nextCategoryId;
+  render();
+
+  contentStage.classList.remove("is-leaving");
+  contentStage.classList.add("is-entering");
+
+  await wait(CONTENT_IN_DURATION);
+
+  contentStage.classList.remove("is-entering");
+  isTransitioning = false;
 }
 
 menuOpenButton.addEventListener("click", openDrawer);
