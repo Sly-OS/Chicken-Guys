@@ -149,7 +149,6 @@ const productGrid = document.querySelector("#product-grid");
 const locationCard = document.querySelector("#location-card");
 const cateringCard = document.querySelector("#catering-card");
 const cateringContent = document.querySelector("#catering-content");
-const contentStage = document.querySelector("#content-stage");
 const menuBadge = document.querySelector("#menu-badge");
 const pageTitle = document.querySelector("#page-title");
 const sectionTitle = document.querySelector("#section-title");
@@ -161,8 +160,7 @@ const productCardTemplate = document.querySelector("#product-card-template");
 let activeCategoryId = menuData[0].id;
 let isTransitioning = false;
 
-const CONTENT_OUT_DURATION = 180;
-const CONTENT_IN_DURATION = 460;
+const DRAWER_CLOSE_DURATION = 520;
 
 function wait(duration) {
   return new Promise((resolve) => {
@@ -210,13 +208,21 @@ function renderCategories() {
     button.className = category.id === activeCategoryId ? "is-active" : "";
     button.setAttribute("aria-pressed", String(category.id === activeCategoryId));
     button.addEventListener("click", async () => {
+      if (isTransitioning) {
+        return;
+      }
+
       if (category.id === activeCategoryId) {
         closeDrawer();
         return;
       }
 
-      await transitionToCategory(category.id);
       closeDrawer();
+      isTransitioning = true;
+      await wait(DRAWER_CLOSE_DURATION);
+      activeCategoryId = category.id;
+      render();
+      isTransitioning = false;
     });
 
     listItem.append(button);
@@ -365,29 +371,6 @@ function renderProducts() {
 function render() {
   renderCategories();
   renderProducts();
-}
-
-async function transitionToCategory(nextCategoryId) {
-  if (isTransitioning) {
-    return;
-  }
-
-  isTransitioning = true;
-  contentStage.classList.remove("is-entering");
-  contentStage.classList.add("is-leaving");
-
-  await wait(CONTENT_OUT_DURATION);
-
-  activeCategoryId = nextCategoryId;
-  render();
-
-  contentStage.classList.remove("is-leaving");
-  contentStage.classList.add("is-entering");
-
-  await wait(CONTENT_IN_DURATION);
-
-  contentStage.classList.remove("is-entering");
-  isTransitioning = false;
 }
 
 menuOpenButton.addEventListener("click", openDrawer);
