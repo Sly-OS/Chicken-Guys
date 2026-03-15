@@ -161,8 +161,8 @@ const productCardTemplate = document.querySelector("#product-card-template");
 let activeCategoryId = menuData[0].id;
 let isTransitioning = false;
 
-const CONTENT_OUT_DURATION = 240;
-const CONTENT_IN_DURATION = 520;
+const CONTENT_OUT_DURATION = 180;
+const CONTENT_IN_DURATION = 460;
 
 function wait(duration) {
   return new Promise((resolve) => {
