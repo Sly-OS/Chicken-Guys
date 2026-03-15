@@ -298,7 +298,7 @@ function renderProducts() {
     });
   }
 
-  if (activeMenuBadge) {
+  if (activeCategory.id === "chicken-meals" && activeMenuBadge) {
     menuBadge.hidden = false;
     menuBadge.textContent = activeMenuBadge;
   }
